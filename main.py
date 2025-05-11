@@ -44,6 +44,7 @@ def plot_fft(signal, fs, title):
     fft_mag = np.abs(np.fft.rfft(signal)) / N
     plt.plot(freqs, 20*np.log10(fft_mag + 1e-12), label=title)
 
+"""
 def imprimir_frecuencias_de_corte(sos_scaled, fs, tipo):
     w, h = sosfreqz(sos_scaled, worN=2000, fs=fs)
     mag_db = 20 * np.log10(np.abs(h) + 1e-12)
@@ -52,16 +53,17 @@ def imprimir_frecuencias_de_corte(sos_scaled, fs, tipo):
     if tipo in ["Pasa Bajas", "Pasa Altas"]:
         if indices.size > 0:
             fc = w[indices[0]] if tipo == "Pasa Bajas" else w[indices[-1]]
-            print(f"\n📏 Frecuencia de corte real del filtro {tipo}: {fc:.2f} Hz")
+            print(f"\n Frecuencia de corte real del filtro {tipo}: {fc:.2f} Hz")
         else:
             print(f"⚠ No se encontró una frecuencia de corte clara para el filtro {tipo}")
     elif tipo in ["Pasa Bandas", "Rechaza Banda"]:
         if indices.size > 1:
             f1 = w[indices[0]]
             f2 = w[indices[-1]]
-            print(f"\n📏 Frecuencias de corte reales del filtro {tipo}: {f1:.2f} Hz – {f2:.2f} Hz")
+            print(f"\n Frecuencias de corte reales del filtro {tipo}: {f1:.2f} Hz – {f2:.2f} Hz")
         else:
             print(f"⚠ No se identificaron dos puntos de corte claros para el filtro {tipo}")
+"""
 
 def procesar_audio(audio_path, filtro_path, tipo_filtro):
     fs, audio = wav.read(audio_path)
@@ -73,16 +75,16 @@ def procesar_audio(audio_path, filtro_path, tipo_filtro):
     sos_scaled = sos.copy()
     sos_scaled[:, 0:3] *= scales.reshape(-1, 1)
 
-    imprimir_frecuencias_de_corte(sos_scaled, fs, tipo_filtro)
+    #imprimir_frecuencias_de_corte(sos_scaled, fs, tipo_filtro)
 
-    print("\n🔊 Reproduciendo sonido original...")
+    print("\nReproduciendo sonido original...")
     sd.play(audio / np.max(np.abs(audio)), fs)
     sd.wait()
 
     audio_filtrado = sosfilt(sos_scaled, audio)
     audio_filtrado_norm = audio_filtrado / np.max(np.abs(audio_filtrado))
 
-    print("🔊 Reproduciendo sonido filtrado...")
+    print("Reproduciendo sonido filtrado...")
     sd.play(audio_filtrado_norm, fs)
     sd.wait()
 
@@ -123,11 +125,11 @@ while True:
     opcion_filtro = input("Ingresa el número de filtro: ").strip()
 
     if opcion_filtro == "5":
-        print("👋 Saliendo del programa.")
+        print("Saliendo del programa.")
         break
 
     if opcion_filtro not in filtros:
-        print("❌ Opción de filtro inválida.")
+        print("Opción de filtro inválida.")
         continue
 
     print("\n¿Qué archivo de audio deseas usar?")
@@ -138,17 +140,17 @@ while True:
     opcion_audio = input("Ingresa el número de archivo de audio: ").strip()
 
     if opcion_audio not in audios:
-        print("❌ Opción de audio inválida.")
+        print("Opcion de audio inválida.")
         continue
 
     ruta_filtro, nombre_filtro = filtros[opcion_filtro]
     ruta_audio = audios[opcion_audio]
 
     if not os.path.exists(ruta_filtro):
-        print(f"❌ No se encontró el archivo de filtro '{ruta_filtro}'.")
+        print(f"No se encontró el archivo de filtro '{ruta_filtro}'.")
         continue
     if not os.path.exists(ruta_audio):
-        print(f"❌ No se encontró el archivo de audio '{ruta_audio}'.")
+        print(f"No se encontró el archivo de audio '{ruta_audio}'.")
         continue
 
     procesar_audio(ruta_audio, ruta_filtro, nombre_filtro)
