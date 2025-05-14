@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sounddevice as sd
-from scipy.signal import sosfilt, sosfreqz
+from scipy.signal import butter, sosfilt, sosfreqz
 import scipy.io.wavfile as wav
 import os
 
