@@ -88,17 +88,9 @@ def filtro_configurable(audio_path):
         audio = audio[:, 0]
 
     order = simpledialog.askinteger("Orden", "Ingrese el orden del filtro:")
-    f_low = simpledialog.askfloat("Frecuencia Baja", "Ingrese frecuencia baja (Hz):")
-    f_high = simpledialog.askfloat("Frecuencia Alta", "Ingrese frecuencia alta (Hz):")
+    f_corte = simpledialog.askfloat("Frecuencia Corte", "Ingrese frecuencia corte (Hz):")
 
-    if order is None or f_low is None or f_high is None:
-        return
-
-    if f_low >= f_high or f_high >= fs / 2:
-        messagebox.showerror("Error", "⚠ Frecuencias inválidas. Asegúrese de que f_low < f_high < fs/2.")
-        return
-
-    sos = butter(order, [f_low, f_high], btype='bandpass', fs=fs, output='sos')
+    sos = butter(order, [f_corte], btype='lowpass', fs=fs, output='sos')
     y = sosfilt(sos, audio)
     y_norm = y / np.max(np.abs(y))
 
@@ -108,14 +100,6 @@ def filtro_configurable(audio_path):
     sd.wait()
 
     w, h = sosfreqz(sos, worN=2000, fs=fs)
-    plt.figure(figsize=(10, 4))
-    plt.plot(w, 20 * np.log10(np.abs(h) + 1e-12))
-    plt.title('Respuesta en frecuencia del filtro configurable')
-    plt.xlabel('Frecuencia (Hz)')
-    plt.ylabel('Ganancia (dB)')
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
 
     plt.figure(figsize=(10, 6))
     plot_fft(audio, fs, 'Original')
@@ -137,7 +121,7 @@ filtros = {
 }
 
 audios = {
-    "Muelle": "muelle_san_blás.wav",
+    "Muelle San Blas": "muelle_san_blás.wav",
     "Creep": "creep.wav",
     "Drum": "drum_go_dum.wav",
     "Barrido": "barrido.wav",
@@ -184,7 +168,7 @@ tk.Label(frame, text="\nAplicar filtro fijo:").pack()
 for nombre in filtros:
     tk.Button(frame, text=nombre, width=20, command=lambda n=nombre: aplicar_filtro(n)).pack()
 
-tk.Label(frame, text="\nFiltro Pasa Bandas Configurable:").pack()
+tk.Label(frame, text="\nFiltro Pasa Bajas Configurable:").pack()
 tk.Button(frame, text="Configurable", width=20, command=aplicar_configurable).pack()
 
 tk.Button(frame, text="Salir", command=root.quit).pack(pady=10)
